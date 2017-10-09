@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Text Analyzer</title>
+    <link rel="stylesheet" href="./../../bower_components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./../design/css/home.css" />
+</head>
+
+<body>
+    <div class="row mainDiv" style="margin-top: 1%;display: none;">
+        <div class="load fileList" style="float: left; width: 30%;">
+            <ul>
+                <li><a>FileName</a></li>
+                <li><a>FileName</a></li>
+                <li><a>File name</a></li>
+                <li><a>File Name</a></li>
+            </ul>
+        </div>
+        <div class="load resultDiv" style="float:left;width: 65%; border: solid;">
+            
+        </div>
+    </div>
+    <div class="row progressReport" style="width: 600px; display: none;">
+        <h4 style="text-align: center;">Processing....</h4>
+        <div id="myProgress" style="margin-left: 10%;margin-top: 45%;">
+            <div id="myBar">0%</div>
+        </div>
+    </div>
+    <div class="row defaultDiv">
+        <h1>Select File or Folder for analyize..</h1>
+    </div>
+    <script src="../script/home.js"></script>
+</body>
+
+</html>
