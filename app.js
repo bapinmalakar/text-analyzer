@@ -1,8 +1,6 @@
 'use strict';
 const { app, BrowserWindow, ipcMain, Menu, dialog, webContents, remote, Ren } = require('electron');
 const [fs, path, url] = [require('fs'), require('path'), require('url')];
-const eventEmiter = require('events').EventEmitter;
-let events = new eventEmiter();
 let win;
 
 function init() {

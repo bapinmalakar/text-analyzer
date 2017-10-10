@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/bapinmalakar/text-analyzer/issues"
   },
-  "homepage": "https://github.com/bapinmalakar/text-analyzer#readme"
+  "homepage": "https://github.com/bapinmalakar/text-analyzer#readme",
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
 }
