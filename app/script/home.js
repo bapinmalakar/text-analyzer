@@ -1,15 +1,17 @@
 const $ = require('jquery');
 const fs = require('fs');
 const path = require('path');
-const {URL} = require('url');
+const { URL } = require('url');
 const { ipcRenderer } = require('electron');
 let resultObject = {
     noOfChar: '',
+    nochardot: '',
     noOfCharSpace: '',
     noOfWords: '',
     noOfUnique: '',
     repetationOfwORD: ''
 };
+let resultMode = '';
 //const eventEmiter = require('events').EventEmitter;
 //alert('rrr');
 //const events = new eventEmiter();
@@ -23,35 +25,43 @@ function processFile(data) {
     let fileData = fs.readFileSync(new URL('file:///' + data), 'utf8').toString();
     alert('exe');
     if (fileData.trim()) {
-        alert(fileData);
-        setProgress(Math.round((1 / 6) * 100));
-        // let fileData = fileData.replace(/ \n| \t|\n |\t |\n|\t/g, ' ');
-        // let fileData = fileData.replace(/. | .|./g, ' ');
-        // resultObject.noOfChar = fileData.length;
-        // setProgress(Math.round((2 / 6) * 100));
-        // fileData = fileData.split(' ');
-        // resultObject.noOfCharSpace = fileData.join('').length;
-        // setProgress(Math.round((3 / 6) * 100));
-        // fileData = fileData.join(' ');
-        // resultObject.noOfWords = fileData.length;
-        // setProgress(Math.round((4 / 6) * 100));
-        // let uniqueWord = [];
-        // fileData.map(d => {
-        //     if (uniqueWord.findIndex(f => f == d) == -1)
-        //         uniqueWord.push({ word: d, repeat: 0 });
-        // });
-        // resultObject.noOfUnique = uniqueWord.length;
-        // setProgress(Math.round((5 / 6) * 100));
-        // uniqueWord.map((d, i) => {
-        //     let wordRepeat = fileData.filter(g => g == d.word);
-        //     if (wordRepeat)
-        //         uniqueWord[i].repeat = wordRepeat.length;
-        // });
-        // resultObject.repetationOfwORD = uniqueWord;
-        // setProgress(Math.round((6 / 6) * 100));
-        // setTimeout(() => {
-        //     showMainDiv(true, false, false);
-        // }, 500);
+        alert(fileData + typeof fileData);
+        setProgress(Math.round((1 / 7) * 100));
+        let nelineData = fileData.replace(/(?:\r\n|\r|\n)/g, ' ');
+        alert('New line data::  ' + nelineData);
+        resultObject.noOfChar = nelineData.length;// number of char with [space, coma, dot]
+        setProgress(Math.round((2 / 7) * 100));
+        let dotData = nelineData.replace(/[\.,]+/g, ' ');// remove [, and .];
+        let clearData = dotData.split(' ');// total string divided by space
+        clearData = clearData.filter(ele => ele.trim() != ''); //[remove spaces present into array]
+        let originalData = clearData;
+        resultObject.noOfCharSpace = clearData.join('').length; // number of character without[space, dot, comma]
+        setProgress(Math.round((3 / 7) * 100));
+
+        resultObject.noOfWords = originalData.length;
+        setProgress(Math.round((4 / 7) * 100));
+
+        let uniqueWord = [];
+        originalData.map((d, i) => {
+            //alert('word: ' + d + ' index ' + i);
+            if (uniqueWord.findIndex(f => f.word == d.trim().toLowerCase()) == -1) // Find Unique words.
+                uniqueWord.push({ word: d.trim().toLowerCase(), repeat: 0 });
+        });
+        resultObject.noOfUnique = uniqueWord.length;
+        setProgress(Math.round((6 / 7) * 100));
+
+        uniqueWord.map((d, i) => {
+            let wordRepeat = originalData.filter(g => g.toLowerCase().trim() == d.word);
+            if (wordRepeat)
+                uniqueWord[i].repeat = wordRepeat.length - 1; // repetation of each word
+        });
+        resultObject.repetationOfwORD = uniqueWord;
+        setProgress(Math.round((7 / 6) * 100));
+        setTimeout(() => {
+            showMainDiv(true, false, false);
+        }, 500);
+        //alert('Result: ' + JSON.stringify(resultObject));
+        resultMode = file;
     }
     else
         alert('No text');
