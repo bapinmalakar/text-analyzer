@@ -9,10 +9,61 @@
 
 <body>
     <div style="height: 700px; width: 750px; border: solid; margin-left: 1%;">
-        <div class="row defaultDiv">
-            <h1>
-                Select File or Folder for analyize
-            </h1>
+        <div class="row mainDiv" style="margin-top: 1%;">
+            <div class="load fileList" style="float: left; width: 30%;">
+                <ul>
+                    <li>
+                        <a>FileName</a>
+                    </li>
+                    <li>
+                        <a>FileName</a>
+                    </li>
+                    <li>
+                        <a>File name</a>
+                    </li>
+                    <li>
+                        <a>File Name</a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="load resultDiv" style="float:left;width: 65%;">
+                <div class="container">
+                    <ul class="nav nav-tabs">
+                        <li id="tableFormat" class="setDiv">
+                            <a href="#">Table Format</a>
+                        </li>
+                        <li id="graphFormat" class="notActive">
+                            <a href="#">Graph Format</a>
+                        </li>
+                    </ul>
+                    <div class="row" id="tableData" style="margin-top: 3%;">
+                        <table class="table table-striped" style="width: 65%;">
+                            <tbody>
+                                <tr>
+                                    <td> Total Number of character</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>Total number of character without space</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>Total number of word</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>Total number of unique word</td>
+                                    <td>0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row" id="graphData" style="margin-top: 3%;">
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

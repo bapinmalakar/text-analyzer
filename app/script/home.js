@@ -11,24 +11,17 @@ let resultObject = {
     noOfUnique: '',
     repetationOfwORD: ''
 };
-let resultMode = '';
-//const eventEmiter = require('events').EventEmitter;
-//alert('rrr');
-//const events = new eventEmiter();
-//alert('Runn');
+let resultMode = 'file';
+
 function processFile(data) {
     for (let key in resultObject) {
         if (resultObject.hasOwnProperty(key))
             resultObject[key] = '';
     }
-    alert(new URL('file:///' + data));
     let fileData = fs.readFileSync(new URL('file:///' + data), 'utf8').toString();
-    alert('exe');
     if (fileData.trim()) {
-        alert(fileData + typeof fileData);
         setProgress(Math.round((1 / 7) * 100));
         let nelineData = fileData.replace(/(?:\r\n|\r|\n)/g, ' ');
-        alert('New line data::  ' + nelineData);
         resultObject.noOfChar = nelineData.length;// number of char with [space, coma, dot]
         setProgress(Math.round((2 / 7) * 100));
         let dotData = nelineData.replace(/[\.,]+/g, ' ');// remove [, and .];
@@ -48,7 +41,7 @@ function processFile(data) {
                 uniqueWord.push({ word: d.trim().toLowerCase(), repeat: 0 });
         });
         resultObject.noOfUnique = uniqueWord.length;
-        setProgress(Math.round((6 / 7) * 100));
+        setProgress(Math.round((5 / 7) * 100));
 
         uniqueWord.map((d, i) => {
             let wordRepeat = originalData.filter(g => g.toLowerCase().trim() == d.word);
@@ -56,7 +49,7 @@ function processFile(data) {
                 uniqueWord[i].repeat = wordRepeat.length - 1; // repetation of each word
         });
         resultObject.repetationOfwORD = uniqueWord;
-        setProgress(Math.round((7 / 6) * 100));
+        setProgress(Math.round((6 / 7) * 100));
         setTimeout(() => {
             showMainDiv(true, false, false);
         }, 500);
@@ -65,19 +58,11 @@ function processFile(data) {
     }
     else
         alert('No text');
-    alert('process file');
-}
-function hel() {
-    alert('hel');
 }
 ipcRenderer.on('file', (event, data) => {
-    alert(data);
-    hel();
+    resultMode = 'file';
     showMainDiv(false, true, false);
-    alert('ok1');
-    alert('ffff');
     processFile(data);
-    alert('oooooo');
 })
 
 
@@ -91,7 +76,6 @@ function showMainDiv(mainDiv, progressDiv, defaultDiv) {
         $('.defaultDiv').hide();
         $('.progressReport').hide();
         $('.mainDiv').show();
-        alert('div show');
         initMainDiv();
     }
     else if (progressDiv) {
@@ -100,7 +84,6 @@ function showMainDiv(mainDiv, progressDiv, defaultDiv) {
         $('.progressReport').show();
         $('#myBar').width('0%');
         $('#myBar').text('0%');
-        alert('Finish');
     }
     else if (defaultDiv) {
         $('.mainDiv').hide();
@@ -111,7 +94,22 @@ function showMainDiv(mainDiv, progressDiv, defaultDiv) {
 }
 
 function initMainDiv() {
-    $('.mainDiv .fileList ul').empty();
-    $('.mainDiv .resultDiv').empty();
-    alert('done');
+    if (resultMode == 'file') {
+        $('.mainDiv .fileList ul').empty();
+        $('.mainDiv .fileList ul').hide();
+        $('.mainDiv .fileList .emptyText').show();
+        loadData();
+    }
+    else if (resultMode == 'folder') {
+        $('.mainDiv .fileList ul').show();
+        $('.mainDiv .fileList ul').empty();
+        $('.mainDiv .fileList .emptyText').hide();
+    }
+}
+
+function loadData(){
+    $('#totalChar').text(resultObject.noOfChar);
+    $('#totalCharSpace').text(resultObject.noOfCharSpace);
+    $('#totalWord').text(resultObject.noOfWords);
+    $('#totalUniqueWord').text(resultObject.noOfUnique);
 }

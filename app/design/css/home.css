@@ -46,3 +46,30 @@ div .defaultDiv h1{
     text-shadow: 2px 14px 18px darkblue;
     color:cadetblue;
 }
+
+div ul #tableFormat{
+    width: 51%;
+    color: black;
+    margin-left: -3%;
+    font-style: oblique;
+    font-size: medium;
+    font-weight: 900;
+    font-family: Gill Sans Extrabold, sans-serif;
+    cursor: pointer;
+}
+div ul #graphFormat{
+    width: 52%;
+    color: black;
+    font-style: oblique;
+    font-size: medium;
+    font-weight: 900;
+    font-family: Gill Sans Extrabold, sans-serif;
+    cursor: pointer;
+}
+.notActive{
+    background-color: whitesmoke; 
+}
+.setDiv{
+    background-color: green;
+    text-decoration: underline;
+}
