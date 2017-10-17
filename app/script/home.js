@@ -1,17 +1,43 @@
 const $ = require('jquery');
+const Chart = require('chart.js');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
 const { ipcRenderer } = require('electron');
+
 let resultObject = {
-    noOfChar: '',
-    nochardot: '',
-    noOfCharSpace: '',
-    noOfWords: '',
-    noOfUnique: '',
-    repetationOfwORD: ''
+    noOfChar: 0,
+    nochardot: 0,
+    noOfCharSpace: 0,
+    noOfWords: 0,
+    noOfUnique: 0,
+    repetationOfwORD: 0
 };
 let resultMode = 'file';
+
+$('#tableFormat').on('click', () => {
+    if (!($('#tableData').is(':visible'))) {
+        $('#graphFormat').removeClass('setDiv');
+        $('#graphFormat').addClass('notActive');
+        $('#tableFormat').removeClass('notActive');
+        $('#tableFormat').addClass('setDiv');
+        $('#graphData').hide();
+        $('#tableData').show();
+    }
+});
+
+$('#graphFormat').on('click', () => {
+    alert('click');
+    if (!($('#graphData').is(':visible'))) {
+        $('#tableFormat').removeClass('setDiv');
+        $('#tableFormat').addClass('notActive');
+        $('#graphFormat').removeClass('notActive');
+        $('#graphFormat').addClass('setDiv');
+        $('#tableData').hide();
+        $('#graphData').show();
+    }
+});
+
 
 function processFile(data) {
     for (let key in resultObject) {
@@ -107,9 +133,64 @@ function initMainDiv() {
     }
 }
 
-function loadData(){
+function defaultTab() {
+    $('#graphFormat').removeClass('setDiv');
+    $('#graphFormat').addClass('notActive');
+    $('#tableFormat').removeClass('notActive');
+    $('#tableFormat').addClass('setDiv');
+    $('#graphData').hide();
+    $('#tableData').show();
+}
+function loadData() {
+    defaultTab();
     $('#totalChar').text(resultObject.noOfChar);
     $('#totalCharSpace').text(resultObject.noOfCharSpace);
     $('#totalWord').text(resultObject.noOfWords);
     $('#totalUniqueWord').text(resultObject.noOfUnique);
+    let chartDiv = $('#chartData');
+    let labell = resultObject.repetationOfwORD.map(d => d.word);
+    let colorArray = [];
+    let values = resultObject.repetationOfwORD.map(d => {
+        colorArray.push('rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')');
+        return d.repeat != 0 ? Math.round((d.repeat / resultObject.noOfWords) * 100) : 0;
+    });
+    let chart = new Chart(chartDiv, {
+        type: 'bar',
+        data: {
+            labels: labell,
+            datasets: [{
+                label: 'Word Repetation Percentage',
+                data: values,
+                backgroundColor: colorArray,
+                lineTension: 0
+            }]
+        },
+        options:{
+            responsive: true,
+            scales:{
+                xAxes:[{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Repeat %',
+                    },
+                    ticks:{
+                        autoSkip: false
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true,
+                        stepSize : 10,                        
+                        max: 100
+                    }
+                }]
+            },
+            title:{
+                display: true,
+                text: 'Percentage of each word repetation'
+            }
+        }
+    });
 }
