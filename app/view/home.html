@@ -26,10 +26,10 @@
             </ul>
             <div class="emptyText" style="margin-left: 3%;margin-top: 65%;">
                 <h3 style="color: darkred">Graph option is for
-                    <br>repetation of word</h3>
+                    <br>Analyze Part-Of-Spech</h3>
             </div>
         </div>
-        <div class="load resultDiv" style="float:left;width: 65%;">
+        <div class="load resultDiv" style="float:left;width: 65%; height: 595px; overflow: auto;">
             <div class="container">
                 <ul class="nav nav-tabs">
                     <li id="tableFormat" class="setDiv">
@@ -60,8 +60,37 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div class="noun" style="margin-top: 2%;width: 95%;margin-left:1%;">
+                        <h2>Noun Present</h2>
+                        <div style="margin-top: 2%;margin-left: 4%;">
+                        </div>
+                    </div>
+
+                    <div class="verb" style="margin-top: 1%;width: 95%;margin-left:1%;">
+                        <h2>Verb Present</h2>
+                        <div style="margin-top: 2%; margin-left: 4%;">
+                        </div>
+                    </div>
+
+                    <div class="adverb" style="margin-top: 1%;width: 95%;margin-left:1%;">
+                        <h2>Adverb Present</h2>
+                        <div style="margin-top: 2%;margin-left: 4%;">
+                        </div>
+                    </div>
+
+                    <div class="adjective" style="margin-top: 1%;width: 95%;margin-left:1%;">
+                        <h2>Adjective Present</h2>
+                        <div style="margin-top: 2%;margin-left: 4%;">
+                        </div>
+                    </div>
+
+                    <table class="table table-striped" id="repetation" style="width: 95%;">
+                        <tbody>
+
+                        </tbody>
+                    </table>
                 </div>
-                <div class="row" id="graphData" style="margin-top: 4%; height: 520px; border: solid;">
+                <div class="row" id="graphData" style="margin-top: 4%; height: 520px;">
                     <canvas width="100%;" height="100%" style="overflow: auto;" id="chartData"></canvas>
                 </div>
             </div>
