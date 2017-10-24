@@ -6,6 +6,9 @@ const { URL } = require('url');
 const { ipcRenderer } = require('electron');
 const Wordpos = require('wordpos');
 
+let chartInitCount = 0;
+let chartDraw;
+let folderResult = [];
 let wordpos = new Wordpos();
 let resultObject = {
     noOfChar: 0,
@@ -42,6 +45,12 @@ $('#graphFormat').on('click', () => {
     }
 });
 
+$('.mainDiv .fileList ul').on('click', 'li a', (e) => {
+    //alert('ok');
+    let itm = $(e.target).text();
+    const obj = folderResult.find(d => d.name == itm);
+    loadData(obj);
+})
 
 function processFile(data) {
     for (let key in resultObject) {
@@ -92,17 +101,102 @@ function processFile(data) {
                 resultMode = 'file';
             })
             .catch(err => {
-                alert('Error occure: ' + err);
+                alert('Some Error Genarated. Try again!');
             });
     }
     else
-        alert('No text');
+        alert('This file those not have anything. Try with anothr file!');
 }
 ipcRenderer.on('file', (event, data) => {
     resultMode = 'file';
     showMainDiv(false, true, false);
     processFile(data);
-})
+});
+ipcRenderer.on('folder-read', (event, args) => {
+    resultMode = 'folder';
+    folderResult = [];
+    let files = args.files;
+    showMainDiv(false, true, false);
+    $('.progressReport h4').text(0 + ' of ' + files.length);
+    processFolder(files, files.length, 0);
+});
+
+function processFolder(files, fileLength, i) {
+    if (i < fileLength) {
+        processFolderFiles(files[i]);
+        setProgressText(i + 1, fileLength);
+        setTimeout(() => {
+            processFolder(files, fileLength, i + 1);
+        }, 500);
+    }
+    else {
+        showMainDiv(true, false, false);
+        listFiles();
+    }
+}
+
+
+function listFiles() {
+    for (let lst of folderResult)
+        $('.mainDiv .fileList ul').append('<li><a href="#">' + lst.name + '</a></li>');
+}
+function processFolderFiles(file) {
+    let fileData = fs.readFileSync(new URL('file:///' + file), 'utf8').toString();
+    let folderResultObject = {
+        name: '',
+        noOfChar: 0,
+        noOfCharSpace: 0,
+        noOfUnique: 0,
+        repetationOfwORD: [],
+        noun: [],
+        verb: [],
+        adverb: [],
+        adjective: [],
+        noOfWords: 0,
+        noOfUnique: 0
+    };
+    if (fileData.trim()) {
+        let foll = file.split('\\');
+        folderResultObject.name = foll[foll.length - 1];
+        let nelineData = fileData.replace(/(?:\r\n|\r|\n)/g, ' ');
+        folderResultObject.noOfChar = nelineData.length;
+        let dotData = nelineData.replace(/[\.,]+/g, ' ');// remove [, and .];
+        partOfSpech(dotData)
+            .then((result) => {
+                folderResultObject.noun = result.noun;
+                folderResultObject.verb = result.verb;
+                folderResultObject.adverb = result.adverb;
+                folderResultObject.adjective = result.adjective;
+
+                let clearData = dotData.split(' ');// total string divided by space
+                clearData = clearData.filter(ele => ele.trim() != ''); //[remove spaces present into array]
+                let originalData = clearData;
+                folderResultObject.noOfCharSpace = clearData.join('').length;
+                folderResultObject.noOfWords = originalData.length;
+
+                let uniqueWord = [];
+                originalData.map((d, i) => {
+                    if (uniqueWord.findIndex(f => f.word == d.trim().toLowerCase()) == -1) // Find Unique words.
+                        uniqueWord.push({ word: d.trim().toLowerCase(), repeat: 0 });
+                });
+                folderResultObject.noOfUnique = uniqueWord.length;
+                uniqueWord.map((d, i) => {
+                    let wordRepeat = originalData.filter(g => g.toLowerCase().trim() == d.word);
+                    if (wordRepeat)
+                        uniqueWord[i].repeat = wordRepeat.length - 1; // repetation of each word
+                });
+                folderResultObject.repetationOfwORD = uniqueWord;
+                folderResult.push(folderResultObject);
+            })
+            .catch(error => alert('Part of spech generated error. Try again!'));
+    }
+}
+
+function setProgressText(completeCount, fileLength) {
+    // alert(completeCount + '=>>> ' + fileLength);
+    $('.progressReport h4').text(completeCount + ' of ' + fileLength);
+    setProgress(Math.round((completeCount / fileLength) * 100));
+}
 
 function partOfSpech(data) {
     return new Promise((resolve, reject) => {
@@ -147,6 +241,8 @@ function initMainDiv() {
         $('.mainDiv .fileList ul').show();
         $('.mainDiv .fileList ul').empty();
         $('.mainDiv .fileList .emptyText').hide();
+        $('.resultDiv #tableData').hide();
+        $('.resultDiv #graphData').hide();
     }
 }
 
@@ -240,6 +336,11 @@ function repetationWordSet(result) {
         $('#repetation tbody').append('<tr><td style="width: 80%;">' + word.word + '</td><td>' + word.repeat + '</td></tr>');
 }
 function initChart(colorArray, values) {
+    if (chartInitCount > 0) {
+        chartDraw.destroy();
+        chartInitCount = 0;
+    }
+
     let chartDiv = $('#chartData');
     let chart = new Chart(chartDiv, {
         type: 'bar',
@@ -280,4 +381,6 @@ function initChart(colorArray, values) {
             }
         }
     });
+    chartInitCount++;
+    chartDraw = chart;
 }

@@ -69,26 +69,42 @@ function loadFile() {
             win.webContents.send('file', filename);
         //console.log('Filename: ', filename);
     })
-    console.log('Load File Called');
+    //console.log('Load File Called');
 }
 function loadFolder() {
     dialog.showOpenDialog({
         properties: ['openDirectory']
     }, (dirName) => {
         if (dirName) {
-            console.log('Folder Name: ', dirName);
+            //console.log('Folder Name: ', dirName);
             let fileList = fs.readdirSync(dirName[0]);
             let files = fileList.filter(d => {
                 if (fs.statSync(dirName[0] + '\\' + d).isFile())
                     return d;
             });
+            if (!files.length)
+                dialog.showMessageBox({
+                    type: 'error',
+                    title: 'Text Analyizer',
+                    message: 'This Folder does not contain any file! Try again',
+                    buttons: ['Ok'],
+                });
+            else {
+                files.map((f,i)=> {
+                    let fpath = dirName[0] + '\\' + f;
+                    files[i] = fpath;
+                });
+                //console.log('Files: ', files);
+                win.webContents.send('folder-read', { dirname: dirName[0], files });
+            }
+
         }
-    })
-    console.log('Load Folder Clicked');
+    });
+    //console.log('Load Folder Clicked');
 }
 
 app.on('ready', () => init());
 app.on('window-all-close', () => {
-    console.log('Close app');
+    //console.log('Close app');
     app.quit();
 });
